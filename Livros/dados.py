@@ -4,7 +4,7 @@ con = sqlite3.connect('dados.db')
 
 # Criado tabela de livros
 
-con.execute('CREATE TABLE livros(\
+con.execute('CREATE TABLE IF NOT EXISTS livros(\
                 id INTEGER PRIMARY KEY,\
                 titulo TEXT,\
                 autor TEXT,\
@@ -14,22 +14,22 @@ con.execute('CREATE TABLE livros(\
 
 # Tabela de Usuarios
 
-con.execute('CREATE TABLE usuarios(\
+con.execute('CREATE TABLE IF NOT EXISTS usuarios(\
                 id INTEGER PRIMARY KEY,\
                 nome TEXT,\
                 sobrenome TEXT,\
                 endereco TEXT,\
-                email TEXTO,\
+                email TEXT,\
                 telefone TEXT)')
 
 
 # Tabela de Emprestimos
 
-con.execute('CREATE TABLE emprestimos(\
+con.execute('CREATE TABLE IF NOT EXISTS emprestimos(\
                 id INTEGER PRIMARY KEY,\
                 id_livro INTEGER,\
                 id_usuario INTEGER,\
                 data_emprestimo TEXT,\
-                data_devolucao TEXTO,\
+                data_devolucao TEXT,\
                 FOREIGN KEY(id_livro)references livros(id),\
                 FOREIGN KEY(id_usuario)references usuarios(id))')
