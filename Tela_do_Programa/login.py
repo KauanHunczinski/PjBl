@@ -12,5 +12,7 @@ if st.button("Cadastrar", type="primary"):
         st.switch_page("painel.py")
 
 
-if st.button("Testar navegacao"):
+if st.button("Testar usuario"):
     st.switch_page("painel.py")
+if st.button("Testar gerencia"):
+    st.switch_page("painel_gerencia.py")
