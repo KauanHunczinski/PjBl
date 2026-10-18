@@ -6,13 +6,37 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+st.html("""
+
+<style>
+    [data-testid="stSidebar"] .st-key-Voltar_ao_login {
+        position: fixed;
+        bottom: 20px;
+        width: auto;
+
+    }
+</style>
+""")
+
 with st.sidebar:
-    st.subheader("Meu espaco")
-    st.write("Area do Usuario")
+    nome_cliente = "Seu nome"
 
-    if st.button("Voltar ao login", type="primary"):
+    with st.expander("Alterar foto de perfil"):
+        foto = st.file_uploader(
+            "Escolha uma foto",
+            type=["jpg", "jpeg", "png"],
+            key="foto_perfil"
+        )
+    st.subheader(f"Olá, {nome_cliente}!")
+
+    if foto is not None:
+        st.image(foto, width=120)
+    else:
+        st.write("👤")
+    if st.button("Voltar ao login", type="primary", key="Voltar_ao_login"):  
         st.switch_page("login.py",)
-
+        st.rerun()
+st.title("Meu painel")
 
 
 
@@ -20,7 +44,6 @@ with st.sidebar:
 if "desejos" not in st.session_state:
     st.session_state["desejos"] = []
 
-st.title("Meu painel")
 
 # criado lista
 
