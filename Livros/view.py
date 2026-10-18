@@ -50,9 +50,10 @@ def exibir_livros():
         print(f"ISBN: {livro[5]}")
         print("\n")
 
+
 # Teste para adicionar
 
-insert_book("O Senhor dos Anéis", "J.R.R. Tolkien", "HarperCollins", 1954, "978-0261102385")
-insert_user("João", "Silva", "Rua A, 123", "joao.silva@email.com", "123456789")
+#insert_book("O Senhor dos Anéis", "J.R.R. Tolkien", "HarperCollins", 1954, "978-0261102385")
+#insert_user("João", "Silva", "Rua A, 123", "joao.silva@email.com", "123456789")
 
 exibir_livros()
