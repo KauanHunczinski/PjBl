@@ -1,5 +1,5 @@
-# necessário baixar stremlit no terminal, para baixar digite: pip install streamlit
-#para mostrar tela e necessario escrever no terminal: streamlit run .\Tela_do_Programa\app.py
+# necessário baixar stremlit no terminal, para baixar digite: python -m pip install streamlit
+#para mostrar tela e necessario escrever no terminal: python -m streamlit run .\Tela_do_Programa\troca_de_paineis.py
 import streamlit as st
 
 # Para adicionar titulo e subtitulo
