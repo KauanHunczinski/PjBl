@@ -1,11 +1,18 @@
 [theme]
 base = "light"
-primaryColor = "#E66A70"
-backgroundColor = "#F4F5F7"
-secondaryBackgroundColor = "#FFFFFF"
-textColor = "#24262B"
+primaryColor = "#1B2A4A"             
+backgroundColor = "#F7F7F4"          
+secondaryBackgroundColor = "#EAEAE4" 
+textColor = "#1E2430"
+font = "sans serif"
 
+# Barra lateral
 [theme.sidebar]
-backgroundColor = "#252525"
-secondaryBackgroundColor = "#333333"
-textColor = "#FFFFFF"
+backgroundColor = "#141F38"
+secondaryBackgroundColor = "#1F2E52"
+textColor = "#EDEBE4"
+primaryColor = "#D9A93F"
+
+# esconde o botão
+[client]
+toolbarMode = "minimal"
