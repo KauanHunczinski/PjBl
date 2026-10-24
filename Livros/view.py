@@ -51,6 +51,14 @@ def exibir_livros():
         print(f"ISBN: {livro[5]}")
         print("\n")
 
+# Funcao para exibir usuarios
+
+def exibir_usuarios():
+    conn = connect()
+
+    usuarios = conn.execute("SELECT id, nome, sobrenome, email FROM usuarios").fetchall()
+    conn.close()
+    return usuarios
 
 # Teste para adicionar
 

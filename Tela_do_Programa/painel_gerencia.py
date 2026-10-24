@@ -5,9 +5,10 @@ from pathlib import Path
 
 st.set_page_config(
     page_title="Gerencia",
-    layout="wide"
-
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
+
 with st.sidebar:
     st.subheader("Area da Gerencia")
     if st.button("Voltar ao login"):
@@ -37,9 +38,8 @@ with st.sidebar:
     st.write("Usuario cadastrado com sucesso!")
 
 
-
-
-
 st. title("Painel Gerencia")
 st.write("Gerencie produtos, Usuarios, emprestimos e devoluçoes")
 
+usuarios = exibir_usuarios()
+st.write(usuarios)
