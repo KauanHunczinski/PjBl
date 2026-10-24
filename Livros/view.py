@@ -2,7 +2,8 @@ import sqlite3
 
 
 def connect():
-    conn = sqlite3.connect('dados.db')
+    caminho_banco = Path(__file__).resolve().parent.parent / "dados.db"
+    conn = sqlite3.connect(caminho_banco)
     return conn
 
 # funçao para inserir livros
@@ -56,4 +57,5 @@ def exibir_livros():
 #insert_book("O Senhor dos Anéis", "J.R.R. Tolkien", "HarperCollins", 1954, "978-0261102385")
 #insert_user("João", "Silva", "Rua A, 123", "joao.silva@email.com", "123456789")
 
-exibir_livros()
+if __name__=="__main__":
+    exibir_livros()

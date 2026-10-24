@@ -1,4 +1,7 @@
 import streamlit as st
+from Livros.view import insert_user
+from pathlib import Path
+
 
 st.set_page_config(
     page_title="Gerencia",
@@ -20,8 +23,18 @@ with st.sidebar:
                     "Cadastrar",
                     type="primary"
                 )
-
-
+    if cadastrar:
+        if nome.strip() == "" or sobrenome.strip() == "" or endereco.strip() == "" or email.strip() == "" or telefone.strip() == "":
+            st.write("Preencha todos os campos")
+        else:
+            insert_user(
+                nome.strip(),
+                sobrenome.strip(),
+                endereco.strip(),
+                email.strip(),
+                telefone.strip()
+)
+    st.write("Usuario cadastrado com sucesso!")
 
 
 
