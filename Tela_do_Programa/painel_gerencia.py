@@ -1,5 +1,5 @@
 import streamlit as st
-from Livros.view import insert_user
+from Livros.view import insert_user, exibir_usuarios
 from pathlib import Path
 
 
@@ -34,8 +34,8 @@ with st.sidebar:
                 endereco.strip(),
                 email.strip(),
                 telefone.strip()
-)
-    st.write("Usuario cadastrado com sucesso!")
+            )
+            st.write("Usuario cadastrado com sucesso!")
 
 
 st. title("Painel Gerencia")
