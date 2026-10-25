@@ -16,4 +16,18 @@ if "senha_hash" not in nomes_colunas:
     print("Coluna senha_hash adicionada!")
 else:
     print("A coluna senha_hash ja existe.")
+
+if "perfil" not in nomes_colunas:
+    conn.execute(
+        """
+        ALTER TABLE usuarios
+        ADD COLUMN perfil TEXT NOT NULL DEFAULT 'usuario'
+        CHECK (perfil IN ('usuario', 'gerente'))
+        """
+    )
+    conn.commit()
+    print("Coluna perfil adicionada!")
+else:
+    print("A coluna perfil já existe.")
+
 conn.close()

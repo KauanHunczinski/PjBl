@@ -73,7 +73,7 @@ def autenticar_usuario(email, senha):
 
     usuarios = conn.execute(
         """
-        SELECT id, nome, senha_hash
+        SELECT id, nome, senha_hash, perfil
         FROM usuarios
         WHERE email = ? COLLATE NOCASE
         """,
@@ -98,7 +98,8 @@ def autenticar_usuario(email, senha):
 
     return {
         "id": usuario[0],
-        "nome": usuario[1]
+        "nome": usuario[1],
+        "perfil": usuario[3]
     }
 
 

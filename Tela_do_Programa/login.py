@@ -21,4 +21,8 @@ if st.button("Entrar", type="primary"):
         else:
             st.session_state.clear()
             st.session_state["usuario_logado"] = usuario
-            st.switch_page("painel.py")
+            
+            if usuario["perfil"] == "gerente":
+                st.switch_page("painel_gerencia.py")
+            else:
+                st.switch_page("painel.py")

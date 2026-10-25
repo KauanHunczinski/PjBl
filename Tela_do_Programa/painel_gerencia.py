@@ -9,12 +9,23 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+
+usuario_logado = st.session_state.get("usuario_logado")
+
+if usuario_logado is None:
+    st.switch_page("login.py")
+
+elif usuario_logado.get("perfil") != "gerente":
+    st.switch_page("painel.py")
+
+
 with st.sidebar:
     st.subheader("Area da Gerencia")
     if st.button("Voltar ao login"):
+        st.session_state.clear()
         st.switch_page("login.py")
     st.subheader("Cadastro de Usuarios")
-    with st.form("cadastro_de_usuario"):
+    with st.form("cadastro_de_usuario", clear_on_submit=True):
                 nome = st.text_input("Nome")
                 sobrenome = st.text_input("Sobrenome")
                 endereco = st.text_input("Endereco")
@@ -43,6 +54,9 @@ with st.sidebar:
                 senha
             )
             st.write("Usuario cadastrado com sucesso!")
+            st.session_state.clear()
+
+
 
 st. title("Painel Gerencia")
 st.write("Gerencie produtos, Usuarios, emprestimos e devoluçoes")
