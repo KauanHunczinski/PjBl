@@ -28,12 +28,19 @@ def carregar_css(nome_arquivo):
 
 carregar_css("estilo.css")
 
+# logando usuario
+
+usuario_logado = st.session_state.get("usuario_logado")
+if usuario_logado is None:
+    st.switch_page("login.py")
+
+
 
 # 2. DADOS E FUNÇÕES AUXILIARES
 CATALOGO = ["Furadeira", "Martelo", "Escada"]
 FORMATO_DATA = "%d/%m/%Y"
 
-nome_cliente = "Seu nome"
+nome_cliente = usuario_logado["nome"]
 hoje = date.today()
 
 emprestimos = [

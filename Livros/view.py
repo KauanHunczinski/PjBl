@@ -1,6 +1,10 @@
+# baixar: python -m pip install argon2-cffi
 import sqlite3
 from pathlib import Path
+from argon2 import PasswordHasher
+from argon2.exceptions import VerificationError, InvalidHashError
 
+gerador_hash = PasswordHasher()
 
 def connect():
     caminho_banco = Path(__file__).resolve().parent.parent / "dados.db"
@@ -17,14 +21,15 @@ def insert_book(titulo, autor, editora, ano_publicacao, isbn):
 
 # Funçao para inserir Usuarios
 
-def insert_user(nome, sobrenome, endereco, email, telefone):
+def insert_user(nome, sobrenome, endereco, email, telefone, senha):
+    senha_hash = gerador_hash.hash(senha)
     conn = connect()
     conn.execute(
         """
-        INSERT INTO usuarios (nome, sobrenome, endereco, email, telefone)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO usuarios (nome, sobrenome, endereco, email, telefone, senha_hash)
+        VALUES (?, ?, ?, ?, ?, ?)
         """,
-        (nome, sobrenome, endereco, email, telefone),
+        (nome, sobrenome, endereco, email, telefone, senha_hash),
     )
     conn.commit()
     conn.close()
@@ -60,6 +65,49 @@ def exibir_usuarios():
     usuarios = conn.execute("SELECT id, nome, sobrenome, email FROM usuarios").fetchall()
     conn.close()
     return usuarios
+
+
+
+def autenticar_usuario(email, senha):
+    conn = connect()
+
+    usuarios = conn.execute(
+        """
+        SELECT id, nome, senha_hash
+        FROM usuarios
+        WHERE email = ? COLLATE NOCASE
+        """,
+        (email.strip(),)
+    ).fetchall()
+
+    conn.close()
+
+    if len(usuarios) != 1:
+        return None
+
+    usuario = usuarios [0]
+    senha_hash = usuario[2]
+
+    if not senha_hash:
+        return None
+    
+    try:
+        gerador_hash.verify(senha_hash, senha)
+    except (VerificationError, InvalidHashError):
+        return None
+
+    return {
+        "id": usuario[0],
+        "nome": usuario[1]
+    }
+
+
+
+
+
+
+
+
 
 # Teste para adicionar
 

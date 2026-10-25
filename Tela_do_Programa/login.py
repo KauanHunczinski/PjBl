@@ -1,4 +1,5 @@
 import streamlit as st
+from Livros.view import autenticar_usuario
 
 
 st.set_page_config(
@@ -10,14 +11,14 @@ st.set_page_config(
 email = st.text_input("E-mail")
 senha = st.text_input("Senha", type="password")
 
-if st.button("Cadastrar", type="primary"):
+if st.button("Entrar", type="primary"):
     if email.strip() == "" or senha.strip() == "":
-        st.write("Preencha Todos os Campos.")
+        st.error("Preencha o e-mail e a senha.")
     else: 
-        st.switch_page("painel.py")
-
-
-if st.button("Testar usuario"):
-    st.switch_page("painel.py")
-if st.button("Testar gerencia"):
-    st.switch_page("painel_gerencia.py")
+        usuario = autenticar_usuario(email, senha)
+        if usuario is None:
+            st.error("E-mail ou senha invalidos.")
+        else:
+            st.session_state.clear()
+            st.session_state["usuario_logado"] = usuario
+            st.switch_page("painel.py")
