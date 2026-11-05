@@ -1,9 +1,29 @@
 # Este aqui é a estrutura planejada da página de busca dos livros, Podem alterar este comentário se quiserem mudanças
 import streamlit as st
-from tela_Api import buscar_livros
+from Tela_do_Programa.tela_Api import buscar_livros
 
 st.title("Biblioteca Digital")
 st.write("Pesquise livros pelo título, autor ou assunto.")
+
+import requests
+import streamlit as st
+from pathlib import Path
+
+# Identificar a pasta onde está o Python
+pasta_projeto = Path(__file__).resolve().parent
+
+# Localizar o CSS
+caminho_css = pasta_projeto / "design_Tela_Api.css"
+
+# Carregar o CSS
+with open(caminho_css, "r", encoding="utf-8") as arquivo:
+    css = arquivo.read()
+
+# Aplicar o CSS no Streamlit
+st.markdown(
+    f"<style>{css}</style>",
+    unsafe_allow_html=True
+)
 
 termo = st.text_input(
     "Digite o nome do livro:",

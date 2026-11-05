@@ -1,0 +1,198 @@
+
+/* 1. VARIÁVEIS E IDENTIDADE VISUAL*/
+
+@import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --marinho: #1B2A4A;
+    --papel: #F7F7F4;
+    --tinta: #1E2430;
+    --tinta-suave: #5E6675;
+    --linha: #DAD9D2;
+    --ouro: #B8862B;
+    --ouro-escuro: #8A6420;
+
+    --verde: #2F7D5B;
+    --ambar: #C27A12;
+    --laranja: #D2661E;
+    --vermelho: #B3372F;
+
+    --fonte-titulo: 'Libre Caslon Text', Georgia, 'Times New Roman', serif;
+    --fonte-corpo: 'Inter', Arial, sans-serif;
+
+    --raio: 6px;
+}
+
+
+/* 2. CONFIGURAÇÕES GERAIS*/
+
+.stApp {
+    background-color: var(--papel);
+    color: var(--tinta);
+    font-family: var(--fonte-corpo);
+}
+
+.main .block-container {
+    max-width: 1150px;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+
+/* 3. TÍTULOS E TEXTOS*/
+
+h1, h2, h3 {
+    font-family: var(--fonte-titulo) !important;
+    color: var(--marinho) !important;
+}
+
+h1 {
+    font-size: 42px !important;
+    font-weight: 700 !important;
+}
+
+h2 {
+    font-size: 30px !important;
+}
+
+h3 {
+    font-size: 23px !important;
+}
+
+p, label, span {
+    color: var(--tinta);
+    font-family: var(--fonte-corpo);
+}
+
+small {
+    color: var(--tinta-suave);
+}
+
+
+/* 4. CAMPOS DE PESQUISA E INPUTS*/
+
+.stTextInput input,
+.stTextArea textarea,
+.stNumberInput input {
+    background-color: #FFFFFF !important;
+    color: var(--tinta) !important;
+    border: 1px solid var(--linha) !important;
+    border-radius: var(--raio) !important;
+    font-family: var(--fonte-corpo) !important;
+    padding: 12px !important;
+}
+
+.stTextInput input:focus,
+.stTextArea textarea:focus {
+    border-color: var(--ouro) !important;
+    box-shadow: 0 0 0 1px var(--ouro) !important;
+}
+
+.stTextInput input::placeholder {
+    color: var(--tinta-suave) !important;
+}
+
+
+/* 5. BOTÕES*/
+
+.stButton button {
+    background-color: var(--marinho) !important;
+    color: #FFFFFF !important;
+    border: 1px solid var(--marinho) !important;
+    border-radius: var(--raio) !important;
+    padding: 10px 22px !important;
+    font-family: var(--fonte-corpo) !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease;
+}
+
+.stButton button:hover {
+    background-color: var(--ouro) !important;
+    border-color: var(--ouro) !important;
+    color: #FFFFFF !important;
+}
+
+
+/* 6. CARTÕES E CONTAINERS*/
+
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background-color: #FFFFFF;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+    padding: 15px;
+}
+
+.stAlert {
+    border-radius: var(--raio);
+}
+
+
+/* 7. BARRA LATERAL*/
+
+[data-testid="stSidebar"] {
+    background-color: var(--marinho);
+}
+
+[data-testid="stSidebar"] * {
+    color: #FFFFFF;
+}
+
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+    color: #FFFFFF !important;
+}
+
+
+/* 8. LINHAS E DIVISORES*/
+
+hr {
+    border: none;
+    border-top: 1px solid var(--linha);
+    margin: 25px 0;
+}
+
+
+/* 9. LINKS*/
+
+a {
+    color: var(--ouro-escuro) !important;
+    text-decoration: none !important;
+}
+
+a:hover {
+    color: var(--ouro) !important;
+    text-decoration: underline !important;
+}
+
+
+/* 10. RESULTADOS DA PESQUISA*/
+
+.resultado-livro {
+    background-color: #FFFFFF;
+    border: 1px solid var(--linha);
+    border-left: 4px solid var(--ouro);
+    border-radius: var(--raio);
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.resultado-livro h3 {
+    font-family: var(--fonte-titulo);
+    color: var(--marinho);
+}
+
+.resultado-livro p {
+    color: var(--tinta-suave);
+}
+
+
+/* 11. RODAPÉ*/
+
+.rodape {
+    border-top: 1px solid var(--linha);
+    padding: 20px;
+    text-align: center;
+    color: var(--tinta-suave);
+    font-size: 13px;
+}
