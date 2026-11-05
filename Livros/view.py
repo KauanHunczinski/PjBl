@@ -57,6 +57,66 @@ def exibir_livros():
         print(f"ISBN: {livro[5]}")
         print("\n")
 
+# listar livros
+
+def listar_livros():
+    conn = connect()
+
+    try:
+        cursor = conn.execute("""
+            SELECT id, titulo, autor, editora,
+                   ano_publicacao, isbn
+            FROM livros
+            ORDER BY id DESC
+        """)
+
+        colunas = [coluna[0] for coluna in cursor.description]
+        livros = cursor.fetchall()
+
+        return [dict(zip(colunas, livro)) for livro in livros]
+
+    finally:
+        conn.close()
+
+
+
+
+
+# Função para editar livros
+
+def editar_livro(id_livro, titulo, autor, editora, ano, isbn):
+    conn = connect()
+
+    try:
+        conn.execute("""
+            UPDATE livros
+            SET titulo = ?,
+                autor = ?,
+                editora = ?,
+                ano_publicacao = ?,
+                isbn = ?
+            WHERE id = ?
+        """, (titulo, autor, editora, ano, isbn, id_livro))
+
+        conn.commit()
+    finally:
+        conn.close()
+
+
+# Função para excluir livros
+def excluir_livro(id_livro):
+    conn = connect()
+
+    try:
+        conn.execute(
+            "DELETE FROM livros WHERE id = ?",
+            (id_livro,)
+        )
+
+        conn.commit()
+    finally:
+        conn.close()
+
 # Funcao para exibir usuarios
 
 def exibir_usuarios():

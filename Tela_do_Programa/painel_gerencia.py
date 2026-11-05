@@ -1,5 +1,5 @@
 import streamlit as st
-from Livros.view import insert_user, exibir_usuarios
+from Livros.view import insert_user, exibir_usuarios, insert_book, listar_livros, editar_livro, excluir_livro
 from pathlib import Path
 
 
@@ -54,7 +54,7 @@ with st.sidebar:
                 senha
             )
             st.write("Usuario cadastrado com sucesso!")
-            st.session_state.clear()
+
 
 
 
@@ -72,3 +72,219 @@ for usuario in usuarios:
         "E-mail": usuario[3]
     })
 st.dataframe(linhas, hide_index=True)
+
+
+# função para aparacer no sistema web
+
+
+def pagina_livros():
+
+    st.title("Gerenciamento de Livros")
+
+# Mensagens após atualização
+    mensagem = st.session_state.pop("mensagem_livro", None)
+    if mensagem:
+        st.success(mensagem)
+
+    livros = listar_livros()
+
+# Abas de gerenciamento
+    aba_cadastrar, aba_editar, aba_excluir = st.tabs([
+        "Cadastrar Livro",
+        "Editar Livro",
+        "Excluir Livro"
+    ])
+
+# CADASTRAR LIVROS
+    with aba_cadastrar:
+        st.subheader("Cadastrar novo livro")
+
+        with st.form("cadastro_livros", clear_on_submit=True):
+            titulo = st.text_input("Título")
+            autor = st.text_input("Autor")
+            editora = st.text_input("Editora")
+
+            ano = st.number_input(
+                "Ano de publicação",
+                min_value=1000,
+                max_value=2100,
+                value=2026
+            )
+
+            isbn = st.text_input("ISBN")
+
+            cadastrar = st.form_submit_button(
+                "Cadastrar Livro"
+            )
+
+        if cadastrar:
+            if all([
+                titulo.strip(),
+                autor.strip(),
+                editora.strip(),
+                isbn.strip()
+            ]):
+                try:
+                    insert_book(
+                        titulo.strip(),
+                        autor.strip(),
+                        editora.strip(),
+                        int(ano),
+                        isbn.strip()
+                    )
+
+                    st.session_state["mensagem_livro"] = (
+                        "Livro cadastrado com sucesso!"
+                    )
+                    st.rerun()
+
+                except Exception as erro:
+                    st.error(f"Erro no cadastro: {erro}")
+            else:
+                st.warning("Preencha todos os campos!")
+
+# EDITAR LIVROS
+    with aba_editar:
+        st.subheader("Editar livro")
+
+        if livros:
+            opcoes = {
+                f"{livro['id']} - {livro['titulo']}": livro
+                for livro in livros
+            }
+
+            selecionado = st.selectbox(
+                "Selecione um livro",
+                list(opcoes.keys()),
+                key="livro_editar"
+            )
+
+            livro = opcoes[selecionado]
+
+            with st.form(f"editar_{livro['id']}"):
+                novo_titulo = st.text_input(
+                    "Título",
+                    value=livro["titulo"]
+                )
+
+                novo_autor = st.text_input(
+                    "Autor",
+                    value=livro["autor"]
+                )
+
+                nova_editora = st.text_input(
+                    "Editora",
+                    value=livro["editora"]
+                )
+
+                novo_ano = st.number_input(
+                    "Ano de publicação",
+                    min_value=1000,
+                    max_value=2100,
+                    value=int(livro["ano_publicacao"])
+                )
+
+                novo_isbn = st.text_input(
+                    "ISBN",
+                    value=str(livro["isbn"])
+                )
+
+                salvar = st.form_submit_button(
+                    "Salvar Alterações"
+                )
+
+            if salvar:
+                if all([
+                    novo_titulo.strip(),
+                    novo_autor.strip(),
+                    nova_editora.strip(),
+                    novo_isbn.strip()
+                ]):
+                    try:
+                        editar_livro(
+                            livro["id"],
+                            novo_titulo.strip(),
+                            novo_autor.strip(),
+                            nova_editora.strip(),
+                            int(novo_ano),
+                            novo_isbn.strip()
+                        )
+
+                        st.session_state["mensagem_livro"] = (
+                            "Livro atualizado com sucesso!"
+                        )
+                        st.rerun()
+
+                    except Exception as erro:
+                        st.error(f"Erro ao editar: {erro}")
+                else:
+                    st.warning("Preencha todos os campos!")
+        else:
+            st.info("Nenhum livro cadastrado.")
+
+# EXCLUIR LIVROS
+    with aba_excluir:
+        st.subheader("Excluir livro")
+
+        if livros:
+            opcoes_excluir = {
+                f"{livro['id']} - {livro['titulo']}": livro
+                for livro in livros
+            }
+
+            selecionado_excluir = st.selectbox(
+                "Selecione um livro",
+                list(opcoes_excluir.keys()),
+                key="livro_excluir"
+            )
+
+            livro_excluir = opcoes_excluir[selecionado_excluir]
+
+            st.warning(
+                "A exclusão é permanente e removerá "
+                "o livro do banco de dados."
+            )
+
+            with st.form(f"excluir_{livro_excluir['id']}"):
+                confirmar = st.checkbox(
+                    "Confirmo que desejo excluir este livro"
+                )
+
+                apagar = st.form_submit_button(
+                    "Excluir Livro"
+                )
+
+            if apagar:
+                if confirmar:
+                    try:
+                        excluir_livro(livro_excluir["id"])
+
+                        st.session_state["mensagem_livro"] = (
+                            "Livro excluído com sucesso!"
+                        )
+                        st.rerun()
+
+                    except Exception as erro:
+                        st.error(f"Erro ao excluir: {erro}")
+                else:
+                    st.warning("Confirme a exclusão!")
+        else:
+            st.info("Nenhum livro cadastrado.")
+
+# LISTA DE LIVROS
+    st.divider()
+    st.subheader("Livros Cadastrados")
+
+    if livros:
+        st.dataframe(
+            livros,
+            use_container_width=True,
+            hide_index=True
+        )
+    else:
+        st.info("Nenhum livro cadastrado.")
+
+
+# Exibir o cadastro e a lista de livros
+
+pagina_livros()
