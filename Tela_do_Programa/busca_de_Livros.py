@@ -1,151 +1,154 @@
-# Este aqui é a estrutura planejada da página de busca dos livros, Podem alterar este comentário se quiserem mudanças
-import streamlit as st
-from Tela_do_Programa.tela_Api import buscar_livros
-
-st.title("Biblioteca Digital")
-st.write("Pesquise livros pelo título, autor ou assunto.")
-
-import requests
-import streamlit as st
 from pathlib import Path
 
-# Identificar a pasta onde está o Python
-pasta_projeto = Path(__file__).resolve().parent
-
-# Localizar o CSS
-caminho_css = pasta_projeto / "design_Tela_Api.css"
-
-# Carregar o CSS
-with open(caminho_css, "r", encoding="utf-8") as arquivo:
-    css = arquivo.read()
-
-# Aplicar o CSS no Streamlit
-st.markdown(
-    f"<style>{css}</style>",
-    unsafe_allow_html=True
-)
-
-termo = st.text_input(
-    "Digite o nome do livro:",
-    placeholder="Ex.: Clean Code"
-)
-
-if st.button("Pesquisar livros"):
-    if not termo.strip():
-        st.warning("Digite o nome de um livro.")
-    else:
-        with st.spinner("Pesquisando livros..."):
-            livros = buscar_livros(termo)
-
-        if livros is None:
-            st.error(
-                "Não foi possível acessar o Google Books. "
-                "Verifique sua conexão e tente novamente."
-            )
-
-        elif not livros:
-            st.info("Nenhum livro encontrado.")
-
-        else:
-            st.success(f"{len(livros)} livros encontrados!")
-
-            for livro in livros:
-                with st.container(border=True):
-                    col1, col2 = st.columns([1, 3])
-
-                    with col1:
-                        if livro["imagem"]:
-                            st.image(
-                                livro["imagem"],
-                                use_container_width=True
-                            )
-
-                    with col2:
-                        st.subheader(livro["titulo"])
-
-                        st.write(
-                            "Autor(es): "
-                            + ", ".join(livro["autores"])
-                        )
-
-                        st.write(f"Ano: {livro['ano']}")
-
-                        st.write(livro["descricao"])
-
-                        if livro["link"]:
-                            st.link_button(
-                                "Ver livro no Google Books",
-                                livro["link"]
-                            )
-
-
 import streamlit as st
-import requests
 
-st.header("Pesquisar livros")
+from Tela_do_Programa.tela_Api import buscar_livros
 
-termo = st.text_input("Digite o nome do livro, autor ou ISBN")
 
-if st.button("Pesquisar"):
-    if termo.strip():
-        url = "https://www.googleapis.com/books/v1/volumes"
+st.set_page_config(
+    page_title="Biblioteca Digital",
+    page_icon="📚",
+    layout="wide",
+)
 
-        parametros = {
-            "q": termo,
-            "maxResults": 10
-        }
+caminho_css = Path(__file__).resolve().parent / "design_Tela_Api.css"
+if caminho_css.exists():
+    st.markdown(
+        f"<style>{caminho_css.read_text(encoding='utf-8')}</style>",
+        unsafe_allow_html=True,
+    )
 
-        try:
-            resposta = requests.get(
-                url,
-                params=parametros,
-                timeout=10
-            )
+CATEGORIAS = {
+    "Todas": "",
+    "Ficção": "fiction",
+    "Romance": "romance",
+    "Aventura": "adventure",
+    "Mistério": "mystery",
+    "Não ficção": "nonfiction",
+}
+IDIOMAS = {"Todos": "", "Português": "pt", "Inglês": "en"}
 
-            resposta.raise_for_status()
-            dados = resposta.json()
-            livros = dados.get("items", [])
 
-            if livros:
-                for livro in livros:
-                    info = livro.get("volumeInfo", {})
+def obter_ano(info):
+    data_publicacao = str(info.get("publishedDate", ""))
+    return data_publicacao[:4] or "Ano não informado"
 
-                    titulo = info.get(
-                        "title", "Título indisponível"
-                    )
 
-                    autores = info.get(
-                        "authors", ["Autor desconhecido"]
-                    )
+def exibir_livro(coluna, livro):
+    info = livro.get("volumeInfo", {})
+    autores = info.get("authors") or ["Autor não informado"]
+    imagem = info.get("imageLinks", {}).get("thumbnail")
+    link = info.get("infoLink")
 
-                    descricao = info.get(
-                        "description",
-                        "Descrição indisponível"
-                    )
+    if imagem:
+        imagem = imagem.replace("http://", "https://", 1)
 
-                    st.subheader(titulo)
-                    st.write("Autor(es): " + ", ".join(autores))
-                    st.write(descricao)
+    with coluna:
+        with st.container(border=True):
+            capa, detalhes = st.columns([1, 2], vertical_alignment="top")
 
-                    imagem = info.get(
-                        "imageLinks", {}
-                    ).get("thumbnail")
+            with capa:
+                if imagem:
+                    st.image(imagem, use_container_width=True)
+                else:
+                    st.caption("Capa indisponível")
 
-                    if imagem:
-                        st.image(imagem, width=120)
+            with detalhes:
+                st.markdown(f"#### {info.get('title', 'Título não informado')}")
+                st.write("**Autor(es):** " + ", ".join(autores))
+                st.caption(
+                    f"{info.get('publisher', 'Editora não informada')} · "
+                    f"{obter_ano(info)}"
+                )
+                avaliacao = info.get("averageRating")
+                if avaliacao is not None:
+                    st.write(f"⭐ {avaliacao}/5")
 
-                    link = info.get("infoLink")
+            with st.expander("Ver sinopse"):
+                st.write(info.get("description", "Sinopse não disponível."))
 
-                    if link:
-                        st.write(f"[Ver livro no Google Books]({link})")
+            if link:
+                st.link_button("Mais informações", link, use_container_width=True)
 
-                    st.divider()
 
-            else:
-                st.warning("Nenhum livro encontrado.")
+st.title("Biblioteca Digital")
+st.write("Pesquise e descubra livros para sua próxima leitura.")
 
-        except requests.RequestException as erro:
-            st.error(f"Erro ao pesquisar livros: {erro}")
+if "busca_atual" not in st.session_state:
+    st.session_state["busca_atual"] = ""
+if "resultados_guardados" not in st.session_state:
+    st.session_state["resultados_guardados"] = {}
 
+with st.form("formulario_pesquisa"):
+    termo_digitado = st.text_input(
+        "Pesquisar livros",
+        placeholder="Digite o título, autor ou assunto",
+        key="campo_pesquisa",
+    )
+    pesquisar = st.form_submit_button("Pesquisar")
+
+if pesquisar:
+    st.session_state["busca_atual"] = termo_digitado.strip()
+
+with st.sidebar.form("formulario_filtros"):
+    st.header("Filtros")
+    categoria = st.selectbox("Categoria", list(CATEGORIAS))
+    idioma = st.selectbox("Idioma", list(IDIOMAS))
+    ordem = st.selectbox("Ordenar por", ["Relevância", "Mais recentes", "Título"])
+    quantidade = st.selectbox("Resultados", [10, 20, 30])
+    st.form_submit_button("Aplicar filtros")
+
+termo = st.session_state["busca_atual"]
+categoria_google = CATEGORIAS[categoria]
+if termo:
+    consulta = termo
+    if categoria_google:
+        consulta = f"{consulta} subject:{categoria_google}"
+    st.subheader(f'Resultados para "{termo}"')
+else:
+    consulta = f"bestseller subject:{categoria_google}" if categoria_google else "bestseller"
+    st.subheader("Mais procurados")
+    st.caption(
+        "Seleção do Google Books por relevância. A API não fornece um ranking "
+        "oficial de livros mais lidos."
+    )
+
+consulta_guardada = (consulta, quantidade)
+if consulta_guardada not in st.session_state["resultados_guardados"]:
+    with st.spinner("Carregando livros..."):
+        resultado = buscar_livros(consulta, quantidade=quantidade)
+    if resultado is not None:
+        st.session_state["resultados_guardados"][consulta_guardada] = resultado
+else:
+    resultado = st.session_state["resultados_guardados"][consulta_guardada]
+
+if resultado is not None:
+    livros = resultado
+    codigo_idioma = IDIOMAS[idioma]
+    if codigo_idioma:
+        livros = [
+            livro
+            for livro in livros
+            if livro.get("volumeInfo", {}).get("language") == codigo_idioma
+        ]
+
+    if ordem == "Mais recentes":
+        livros = sorted(
+            livros,
+            key=lambda livro: obter_ano(livro.get("volumeInfo", {})),
+            reverse=True,
+        )
+    elif ordem == "Título":
+        livros = sorted(
+            livros,
+            key=lambda livro: livro.get("volumeInfo", {}).get("title", "").casefold(),
+        )
+
+    if not livros:
+        st.info("Nenhum livro encontrado com esses filtros.")
     else:
-        st.warning("Digite o nome de um livro para pesquisar.")
+        st.caption(f"{len(livros)} livros")
+        for indice in range(0, len(livros), 2):
+            colunas = st.columns(2)
+            for coluna, livro in zip(colunas, livros[indice : indice + 2]):
+                exibir_livro(coluna, livro)

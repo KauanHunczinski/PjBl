@@ -1,186 +1,56 @@
-#UTILIZAR ESTE COMANDO NO TERMINAL COM O STREAMLIT PARA ACESSAR A PÁGINA python -m streamlit run Tela_do_Programa/tela_Api.py
-import requests
-
-import streamlit as st
-
-
-import requests
-import streamlit as st
+import os
 from pathlib import Path
 
+import requests
+import streamlit as st
 
 
+URL_GOOGLE_BOOKS = "https://www.googleapis.com/books/v1/volumes"
 
 
-# Identificar a pasta onde está o Python
-pasta_projeto = Path(__file__).resolve().parent
+def ler_chave_google():
+    chave_api = os.environ.get("GOOGLE_BOOKS_API_KEY", "").strip()
+    if chave_api:
+        return chave_api
 
-# Localizar o CSS
-caminho_css = pasta_projeto / "design_Tela_Api.css"
+    arquivo_segredos = (
+        Path(__file__).resolve().parent.parent
+        / ".streamlit"
+        / "secrets.toml"
+    )
+    if not arquivo_segredos.exists():
+        return ""
 
-# Carregar o CSS
-with open(caminho_css, "r", encoding="utf-8") as arquivo:
-    css = arquivo.read()
-
-# Aplicar o CSS no Streamlit
-st.markdown(
-    f"<style>{css}</style>",
-    unsafe_allow_html=True
-)
-
-
-
+    return st.secrets["GOOGLE_BOOKS_API_KEY"].strip()
 
 
 def buscar_livros(termo_busca, quantidade=10):
-
-    url = "https://www.googleapis.com/books/v1/volumes"
-
-    parametros = {
-        "q": termo_busca,
-        "maxResults": quantidade,
-        # Carregar chave da API
-        "key": st.secrets["AIzaSyB6S2IkjMausTcow0_aBYodA5y_FCu_NxQ"]}
-
-    
-def buscar_livros(termo_busca, quantidade=10):
-
-    url = "https://www.googleapis.com/books/v1/volumes"
+    chave_api = ler_chave_google()
+    if not chave_api:
+        st.error(
+            "A chave da API do Google Books não está configurada. "
+            "Defina GOOGLE_BOOKS_API_KEY no ambiente ou em .streamlit/secrets.toml."
+        )
+        return None
 
     parametros = {
         "q": termo_busca,
-        "maxResults": quantidade,
-        "key": "AIzaSyB6S2IkjMausTcow0_aBYodA5y_FCu_NxQ"
+        "maxResults": max(1, min(40, quantidade)),
+        "key": chave_api,
     }
 
     try:
-        resposta = requests.get(
-            url,
-            params=parametros,
-            timeout=15
-        )
-
-        if resposta.status_code == 200:
-            dados = resposta.json()
-            return dados.get("items", [])
-
-        else:
+        resposta = requests.get(URL_GOOGLE_BOOKS, params=parametros, timeout=15)
+        if resposta.status_code == 429:
             st.error(
-                f"Erro Google Books: HTTP {resposta.status_code}"
+                "O Google Books atingiu o limite de consultas. "
+                "Verifique a cota da chave configurada e tente novamente mais tarde."
             )
+            return None
 
-            try:
-                st.write(resposta.json().get("error", {}))
-            except ValueError:
-                st.write(resposta.text)
+        resposta.raise_for_status()
+    except requests.RequestException:
+        st.error("Não foi possível acessar o Google Books. Verifique a conexão.")
+        return None
 
-            return []
-
-    except requests.exceptions.RequestException as erro:
-        st.error(f"Erro de conexão: {erro}")
-        return []
-
-
-
-
-# INTERFACE DE PESQUISA DA BIBLIOTECA
-
-
-st.markdown(
-    '<h1 class="titulo">Encontre sua próxima leitura.</h1>',
-    unsafe_allow_html=True
-)
-
-st.write("Pesquise livros pelo título, autor ou assunto.")
-
-# Campo de pesquisa
-with st.form("formulario_pesquisa"):
-    termo_busca = st.text_input(
-        "Pesquisar livros",
-        placeholder="Exemplo: Harry Potter, Machado de Assis..."
-    )
-
-    pesquisar = st.form_submit_button("Pesquisar livros")
-
-# Executar pesquisa
-if pesquisar:
-
-    if termo_busca.strip():
-
-        with st.spinner("Pesquisando livros..."):
-
-            livros = buscar_livros(termo_busca, quantidade=10)
-
-        if livros:
-
-            st.subheader("Resultados da pesquisa")
-
-            # Organizar os livros em duas colunas
-            for i in range(0, len(livros), 2):
-
-                colunas = st.columns(2)
-
-                for coluna, livro in zip(
-                    colunas,
-                    livros[i:i+2]
-                ):
-
-                    info = livro.get("volumeInfo", {})
-
-                    titulo = info.get(
-                        "title", "Título não informado"
-                    )
-
-                    autores = info.get(
-                        "authors", ["Autor desconhecido"]
-                    )
-
-                    editora = info.get(
-                        "publisher", "Editora não informada"
-                    )
-
-                    ano = info.get(
-                        "publishedDate", "Ano desconhecido"
-                    )
-
-                    descricao = info.get(
-                        "description", "Descrição não disponível."
-                    )
-
-                    imagem = info.get(
-                        "imageLinks", {}
-                    ).get("thumbnail")
-
-                    link = info.get("infoLink", "")
-
-                    with coluna:
-
-                        with st.container(border=True):
-
-                            if imagem:
-                                st.image(imagem, width=140)
-
-                            st.markdown(f"### {titulo}")
-
-                            st.write(
-                                "**Autor:** " + ", ".join(autores)
-                            )
-
-                            st.write("**Editora:**", editora)
-
-                            st.write("**Publicação:**", ano)
-
-                            with st.expander("Ver descrição"):
-                                st.write(descricao)
-
-                            if link:
-                                st.link_button(
-                                    "Mais informações",
-                                    link
-                                )
-
-        else:
-            st.warning("Nenhum livro encontrado.")
-
-    else:
-        st.warning("Digite o nome de um livro para pesquisar.")
+    return resposta.json().get("items", [])

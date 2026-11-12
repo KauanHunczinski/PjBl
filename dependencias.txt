@@ -1,0 +1,7 @@
+# Crie o ambiente do projeto e instale as dependencias com:
+# python -m venv .venv
+# .\.venv\Scripts\python.exe -m pip install -r dependencias.txt
+
+streamlit
+requests
+argon2-cffi

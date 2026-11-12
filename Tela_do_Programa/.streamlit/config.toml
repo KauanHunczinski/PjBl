@@ -13,8 +13,6 @@ secondaryBackgroundColor = "#1F2E52"
 textColor = "#EDEBE4"
 primaryColor = "#D9A93F"
 
-# esconde o botão
+# esconde o botÃ£o
 [client]
 toolbarMode = "minimal"
-
-GOOGLE_BOOKS_API_KEY = "AIzaSyB6S2IkjMausTcow0_aBYodA5y_FCu_NxQ"
