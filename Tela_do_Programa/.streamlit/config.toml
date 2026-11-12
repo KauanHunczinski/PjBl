@@ -1,6 +1,6 @@
 [theme]
 base = "light"
-primaryColor = "#1B2A4A"             
+primaryColor = "#174A35"
 backgroundColor = "#F7F7F4"          
 secondaryBackgroundColor = "#EAEAE4" 
 textColor = "#1E2430"
@@ -8,8 +8,8 @@ font = "sans serif"
 
 # Barra lateral
 [theme.sidebar]
-backgroundColor = "#141F38"
-secondaryBackgroundColor = "#1F2E52"
+backgroundColor = "#123B2C"
+secondaryBackgroundColor = "#1B4D39"
 textColor = "#EDEBE4"
 primaryColor = "#D9A93F"
 

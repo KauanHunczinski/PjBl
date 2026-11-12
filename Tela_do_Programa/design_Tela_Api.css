@@ -4,11 +4,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    --marinho: #1B2A4A;
+    --verde-escuro: #174A35;
     --papel: #F7F7F4;
     --tinta: #1E2430;
     --tinta-suave: #5E6675;
-    --linha: #1B2A4A;
+    --linha: #C9D8CE;
     --ouro: #B8862B;
     --ouro-escuro: #8A6420;
 
@@ -47,7 +47,7 @@
 
 h1, h2, h3 {
     font-family: var(--fonte-titulo) !important;
-    color: var(--marinho) !important;
+    color: var(--verde-escuro) !important;
 }
 
 h1 {
@@ -100,9 +100,9 @@ small {
 /* 5. BOTÕES*/
 
 .stButton button {
-    background-color: var(--marinho) !important;
+    background-color: var(--verde-escuro) !important;
     color: #FFFFFF !important;
-    border: 1px solid var(--marinho) !important;
+    border: 1px solid var(--verde-escuro) !important;
     border-radius: var(--raio) !important;
     padding: 10px 22px !important;
     font-family: var(--fonte-corpo) !important;
@@ -137,7 +137,7 @@ small {
 /* 7. BARRA LATERAL*/
 
 [data-testid="stSidebar"] {
-    background-color: var(--marinho);
+    background-color: var(--verde-escuro);
 }
 
 [data-testid="stSidebar"] * {
@@ -194,7 +194,7 @@ a:hover {
 
 .resultado-livro h3 {
     font-family: var(--fonte-titulo);
-    color: var(--marinho);
+    color: var(--verde-escuro);
 }
 
 .resultado-livro p {
