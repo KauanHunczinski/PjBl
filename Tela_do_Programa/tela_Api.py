@@ -28,8 +28,14 @@ def buscar_livros(termo_busca, quantidade=10):
     chave_api = ler_chave_google()
     if not chave_api:
         st.error(
-            "A chave da API do Google Books não está configurada. "
-            "Defina GOOGLE_BOOKS_API_KEY no ambiente ou em .streamlit/secrets.toml."
+            "A chave da API do Google Books não está configurada neste computador. "
+            "Instalar os pacotes de dependencias.txt não configura essa chave."
+        )
+        st.info(
+            "Para configurar: copie .streamlit/secrets.toml.example para "
+            ".streamlit/secrets.toml, coloque sua chave em GOOGLE_BOOKS_API_KEY "
+            "e reinicie o Streamlit. Você também pode definir essa variável "
+            "no ambiente."
         )
         return None
 
