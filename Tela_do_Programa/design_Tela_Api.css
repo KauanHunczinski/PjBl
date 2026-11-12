@@ -17,9 +17,9 @@
     --laranja: #D2661E;
     --vermelho: #B3372F;
 
-    --sombra-livro: 18px 25px 18px rgba(30, 36, 48, 0.28);
-    --sombra-suave: 3px 5px 8px rgba(30, 36, 48, 0.15);
-    --sombra-hover: 22px 30px 22px rgba(30, 36, 48, 0.35);
+    --sombra-livro: 9px 12px 9px rgba(30, 36, 48, 0.28);
+    --sombra-suave: 1px 2px 4px rgba(30, 36, 48, 0.15);
+    --sombra-hover: 11px 15px 11px rgba(30, 36, 48, 0.35);
 
     --fonte-titulo: 'Libre Caslon Text', Georgia, 'Times New Roman', serif;
     --fonte-corpo: 'Inter', Arial, sans-serif;
