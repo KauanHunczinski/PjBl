@@ -16,3 +16,5 @@ primaryColor = "#D9A93F"
 # esconde o botÃ£o
 [client]
 toolbarMode = "minimal"
+
+GOOGLE_BOOKS_API_KEY = "AIzaSyB6S2IkjMausTcow0_aBYodA5y_FCu_NxQ"
