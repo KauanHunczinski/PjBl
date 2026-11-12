@@ -6,9 +6,6 @@
 #
 # Para abrir direto a busca de livros:
 # python -m streamlit run .\Tela_do_Programa\busca_de_Livros.py
-#
-# A busca também precisa de GOOGLE_BOOKS_API_KEY. Veja README.md para configurar
-# a chave localmente em .streamlit/secrets.toml (não compartilhe esse arquivo).
 
 streamlit
 requests
