@@ -8,7 +8,7 @@
     --papel: #F7F7F4;
     --tinta: #1E2430;
     --tinta-suave: #5E6675;
-    --linha: #DAD9D2;
+    --linha: #1B2A4A;
     --ouro: #B8862B;
     --ouro-escuro: #8A6420;
 
@@ -16,6 +16,10 @@
     --ambar: #C27A12;
     --laranja: #D2661E;
     --vermelho: #B3372F;
+
+    --sombra-livro: 18px 25px 18px rgba(30, 36, 48, 0.28);
+    --sombra-suave: 3px 5px 8px rgba(30, 36, 48, 0.15);
+    --sombra-hover: 22px 30px 22px rgba(30, 36, 48, 0.35);
 
     --fonte-titulo: 'Libre Caslon Text', Georgia, 'Times New Roman', serif;
     --fonte-corpo: 'Inter', Arial, sans-serif;
@@ -120,6 +124,9 @@ small {
     border: 1px solid var(--linha);
     border-radius: var(--raio);
     padding: 15px;
+    .livro-capa img {
+    filter: drop-shadow(18px 25px 18px rgba(30, 36, 48, 0.28));
+}
 }
 
 .stAlert {
@@ -177,6 +184,14 @@ a:hover {
     margin-bottom: 15px;
 }
 
+/* 11. SOMBREAMENTO DAS CAPAS */
+
+[data-testid="stImage"] img,
+.livro-capa img {
+    filter: drop-shadow(var(--sombra-livro));
+    transition: filter 0.3s ease;
+}
+
 .resultado-livro h3 {
     font-family: var(--fonte-titulo);
     color: var(--marinho);
@@ -187,7 +202,27 @@ a:hover {
 }
 
 
-/* 11. RODAPÉ*/
+/* 12. ANIMAÇÃO DE ENTRADA DOS LIVROS */
+
+[data-testid="stImage"] img,
+.livro-capa img {
+    animation: livroSubindo 0.9s ease-out both;
+}
+
+@keyframes livroSubindo {
+    from {
+        opacity: 0;
+        transform: translateY(35px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* 13. RODAPÉ*/
 
 .rodape {
     border-top: 1px solid var(--linha);
