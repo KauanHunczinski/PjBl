@@ -1,7 +1,7 @@
 import streamlit as st
-from Livros.view import insert_user, exibir_usuarios, insert_book, listar_livros, editar_livro, excluir_livro
+from Livros.view import insert_user, exibir_usuarios, insert_book, listar_livros, editar_livro, excluir_livro, cadastrar_emprestimo
 from pathlib import Path
-
+from datetime import date, timedelta
 
 st.set_page_config(
     page_title="Gerencia",
@@ -288,3 +288,63 @@ def pagina_livros():
 # Exibir o cadastro e a lista de livros
 
 pagina_livros()
+
+
+# GERENCIAMENTO DE EMPRÉSTIMOS
+
+st.divider()
+st.title("Gerenciamento de Empréstimos")
+
+with st.form("cadastro_emprestimo", clear_on_submit=True):
+
+    id_usuario = st.number_input(
+        "ID do usuário",
+        min_value=1,
+        step=1
+    )
+
+    id_livro = st.number_input(
+        "ID do livro",
+        min_value=1,
+        step=1
+    )
+
+    data_emprestimo = st.date_input(
+        "Data do empréstimo",
+        value=date.today(),
+        format="DD/MM/YYYY"
+    )
+
+    data_devolucao = st.date_input(
+        "Data prevista para devolução",
+        value=date.today() + timedelta(days=7),
+        format="DD/MM/YYYY"
+    )
+
+    salvar = st.form_submit_button(
+        "Cadastrar Empréstimo"
+    )
+
+if salvar:
+
+    if data_devolucao < data_emprestimo:
+        st.warning(
+            "A devolução não pode ser anterior ao empréstimo."
+        )
+
+    else:
+        try:
+            cadastrar_emprestimo(
+                int(id_usuario),
+                int(id_livro),
+                data_emprestimo.strftime("%d/%m/%Y"),
+                data_devolucao.strftime("%d/%m/%Y")
+            )
+
+            st.success("Empréstimo cadastrado com sucesso!")
+
+        except ValueError as erro:
+            st.error(str(erro))
+
+        except Exception as erro:
+            st.error(f"Erro ao cadastrar empréstimo: {erro}")

@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from html import escape
 from pathlib import Path
-
+from Livros.view import listar_livros, listar_desejos as buscar_desejos, adicionar_desejo as salvar_desejo, remover_desejo as apagar_desejo, listar_emprestimos_usuario
 import streamlit as st
 from streamlit.errors import StreamlitAPIException
 
@@ -37,19 +37,21 @@ if usuario_logado is None:
 
 
 # 2. DADOS E FUNÇÕES AUXILIARES
-CATALOGO = ["Furadeira", "Martelo", "Escada"]
+CATALOGO = {
+    livro["id"]: livro["titulo"]
+    for livro in listar_livros()
+}
 FORMATO_DATA = "%d/%m/%Y"
 
 nome_cliente = usuario_logado["nome"]
+usuario_id = usuario_logado["id"]
 hoje = date.today()
 
-emprestimos = [
-    {"Produto": "Furadeira", "Retirada": "17/10/2026", "Devolver até": "24/10/2026"},
-    {"Produto": "Martelo", "Retirada": "20/10/2026", "Devolver até": "02/11/2026"},
-]
+emprestimos = listar_emprestimos_usuario(
+    usuario_logado["id"]
+)
 
-if "desejos" not in st.session_state:
-    st.session_state["desejos"] = []
+desejos = buscar_desejos(usuario_id)
 
 
 def converter_data(texto):
@@ -70,14 +72,12 @@ def calcular_situacao(texto_data):
 
 
 def adicionar_desejo():
-    produto = st.session_state["produto_desejado"]
-    if produto not in st.session_state["desejos"]:
-        st.session_state["desejos"].append(produto)
+    livro_id = st.session_state["produto_desejado"]
+    salvar_desejo(usuario_id, livro_id)
 
 
-def remover_desejo(produto):
-    if produto in st.session_state["desejos"]:
-        st.session_state["desejos"].remove(produto)
+def remover_desejo(livro_id):
+    apagar_desejo(usuario_id, livro_id)
 
 
 def tabela_emprestimos_html(lista):
@@ -152,7 +152,7 @@ st.html(f"""
 # 5. FAIXA DE INDICADORES
 
 total_emprestimos = len(emprestimos)
-total_desejos = len(st.session_state["desejos"])
+total_desejos = len(desejos)
 
 if emprestimos:
     proximo = min(emprestimos, key=lambda e: converter_data(e["Devolver até"]))
@@ -192,7 +192,7 @@ st.html(f"""
 
 with st.container(key="secao_emprestimos"):
     st.subheader("Meus empréstimos")
-    st.caption("Dados de exemplo, ainda sem ligação com o banco de dados.")
+    st.caption("Empréstimos cadastrados pela gerência.")
 
     if not emprestimos:
         st.html(
@@ -204,48 +204,69 @@ with st.container(key="secao_emprestimos"):
 
 
 
+
 # 7. LISTA DE DESEJOS
 
 with st.container(key="secao_desejos"):
     st.subheader("Lista de desejos")
 
-    col_seletor, col_botao = st.columns([4, 1], vertical_alignment="bottom")
-
-    with col_seletor:
-        produto_desejado = st.selectbox(
-            "Qual item você deseja pegar emprestado?",
-            CATALOGO,
-            key="produto_desejado",
+    if CATALOGO:
+        col_seletor, col_botao = st.columns(
+            [4, 1],
+            vertical_alignment="bottom"
         )
 
-    with col_botao:
-        ja_na_lista = produto_desejado in st.session_state["desejos"]
-        with st.container(key="botao_adicionar"):
-            st.button(
-                "Adicionar",
-                type="primary",
-                icon=":material/add:",
-                on_click=adicionar_desejo,
-                disabled=ja_na_lista,
-                help="Este item já está na sua lista." if ja_na_lista else None,
+        with col_seletor:
+            produto_desejado = st.selectbox(
+                "Qual livro você deseja pegar emprestado?",
+                options=list(CATALOGO.keys()),
+                format_func=lambda id: CATALOGO[id],
+                key="produto_desejado"
             )
 
-    if not st.session_state["desejos"]:
+        with col_botao:
+            ja_na_lista = produto_desejado in [
+                livro[0] for livro in desejos
+            ]
+
+            with st.container(key="botao_adicionar"):
+                st.button(
+                    "Adicionar",
+                    type="primary",
+                    icon=":material/add:",
+                    on_click=adicionar_desejo,
+                    disabled=ja_na_lista
+                )
+    else:
+        st.info("Nenhum livro cadastrado.")
+
+    if not desejos:
         st.html(
-            '<p class="vazio">Sua lista está vazia. '
-            "Escolha um item acima e clique em Adicionar.</p>"
+            '<p class="vazio">'
+            'Sua lista está vazia.'
+            '</p>'
         )
 
-    for i, produto in enumerate(st.session_state["desejos"]):
-        with st.container(key=f"item_desejo_{i}"):
-            col_nome, col_remover = st.columns([5, 1], vertical_alignment="center")
+    for livro_id, titulo in desejos:
+        with st.container(key=f"item_desejo_{livro_id}"):
+
+            col_nome, col_remover = st.columns(
+                [5, 1],
+                vertical_alignment="center"
+            )
+
             with col_nome:
-                st.html(f'<span class="nome-desejo">{escape(produto)}</span>')
+                st.html(
+                    f'<span class="nome-desejo">'
+                    f'{escape(titulo)}'
+                    f'</span>'
+                )
+
             with col_remover:
                 st.button(
                     "Remover",
-                    key=f"remover_{produto}",
+                    key=f"remover_{livro_id}",
                     icon=":material/delete:",
                     on_click=remover_desejo,
-                    args=(produto,),
+                    args=(livro_id,)
                 )
