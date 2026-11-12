@@ -1,6 +1,14 @@
-# Crie o ambiente do projeto e instale as dependencias com:
+# Na pasta principal do projeto, crie o ambiente virtual:
 # python -m venv .venv
+#
+# instale o Streamlit e os demais pacotes do projeto:
 # .\.venv\Scripts\python.exe -m pip install -r dependencias.txt
+#
+# Para abrir pelo login:
+# .\.venv\Scripts\python.exe -m streamlit run .\Tela_do_Programa\troca_de_paineis.py
+#
+# Para abrir direto a busca de livros:
+# .\.venv\Scripts\python.exe -m streamlit run .\Tela_do_Programa\busca_de_Livros.py
 
 streamlit
 requests
