@@ -1,11 +1,7 @@
 # Na pasta principal do projeto, instale o Streamlit e os demais pacotes:
 # python -m pip install -r dependencias.txt
-#
-# Para abrir pelo login:
+# Para abrir pelo login e acessar a biblioteca:
 # python -m streamlit run .\Tela_do_Programa\troca_de_paineis.py
-#
-# Para abrir direto a busca de livros:
-# python -m streamlit run .\Tela_do_Programa\busca_de_Livros.py
 
 streamlit
 requests

@@ -25,4 +25,4 @@ if st.button("Entrar", type="primary"):
             if usuario["perfil"] == "gerente":
                 st.switch_page("painel_gerencia.py")
             else:
-                st.switch_page("painel.py")
+                st.switch_page("busca_de_Livros.py")

@@ -1,7 +1,19 @@
 from datetime import date, datetime
 from html import escape
 from pathlib import Path
-from Livros.view import listar_livros, listar_desejos as buscar_desejos, adicionar_desejo as salvar_desejo, remover_desejo as apagar_desejo, listar_emprestimos_usuario
+from Livros.view import (
+    listar_livros,
+    listar_desejos as buscar_desejos,
+    adicionar_desejo as salvar_desejo,
+    remover_desejo as apagar_desejo,
+    listar_emprestimos_usuario,
+    obter_perfil_usuario,
+    listar_solicitacoes_usuario,
+    listar_acompanhamentos_usuario,
+    cancelar_acompanhamento,
+    listar_notificacoes_usuario,
+    marcar_notificacao_lida,
+)
 import streamlit as st
 from streamlit.errors import StreamlitAPIException
 
@@ -31,8 +43,15 @@ carregar_css("estilo.css")
 # logando usuario
 
 usuario_logado = st.session_state.get("usuario_logado")
-if usuario_logado is None:
+perfil_usuario = (
+    obter_perfil_usuario(usuario_logado.get("id"))
+    if isinstance(usuario_logado, dict)
+    else None
+)
+if perfil_usuario is None:
     st.switch_page("login.py")
+elif perfil_usuario != "usuario":
+    st.switch_page("painel_gerencia.py")
 
 
 
@@ -123,13 +142,25 @@ with st.sidebar:
             key="foto_perfil",
         )
 
+    if foto is not None:
+        st.session_state["foto_perfil_bytes"] = foto.getvalue()
+    foto_perfil_bytes = st.session_state.get("foto_perfil_bytes")
+
     with area_perfil:
-        if foto is not None:
-            st.image(foto, width=110)
+        if foto_perfil_bytes:
+            st.image(foto_perfil_bytes, width=110)
         else:
             inicial = escape(nome_cliente[:1].upper())
             st.html(f'<div class="avatar">{inicial}</div>')
         st.html(f'<div class="perfil-nome">Olá, <strong>{escape(nome_cliente)}</strong>!</div>')
+
+    if st.button(
+        "Voltar à biblioteca",
+        key="voltar_biblioteca",
+        icon=":material/library_books:",
+        width="stretch",
+    ):
+        st.switch_page("busca_de_Livros.py")
 
     if st.button("Voltar ao login", key="Voltar_ao_login", icon=":material/logout:"):
         try:
@@ -143,7 +174,7 @@ with st.sidebar:
 st.html(f"""
 <div class="cabecalho">
     <h1>Meu painel</h1>
-    <p>Acompanhe seus empréstimos e sua lista de desejos. Hoje é {hoje.strftime(FORMATO_DATA)}.</p>
+    <p>Acompanhe seus empréstimos presenciais, desejos e interesses no acervo. Hoje é {hoje.strftime(FORMATO_DATA)}.</p>
 </div>
 """)
 
@@ -270,3 +301,68 @@ with st.container(key="secao_desejos"):
                     on_click=remover_desejo,
                     args=(livro_id,)
                 )
+
+
+st.divider()
+st.subheader("Minha biblioteca")
+aba_sugestoes, aba_acompanhamentos, aba_notificacoes = st.tabs(
+    ["Sugestões de aquisição", "Livros acompanhados", "Notificações"]
+)
+
+with aba_sugestoes:
+    solicitacoes_usuario = listar_solicitacoes_usuario(usuario_id)
+    if not solicitacoes_usuario:
+        st.info("Você ainda não enviou sugestões de aquisição.")
+    for solicitacao in solicitacoes_usuario:
+        st.markdown(f"**{escape(solicitacao['titulo'])}**")
+        if solicitacao.get("autor"):
+            st.caption(solicitacao["autor"])
+        st.write(
+            f"Situação: **{solicitacao['status']}** · "
+            f"Solicitada em {solicitacao['criada_em']}"
+        )
+
+with aba_acompanhamentos:
+    acompanhamentos_usuario = listar_acompanhamentos_usuario(usuario_id)
+    if not acompanhamentos_usuario:
+        st.info("Você ainda não está acompanhando livros.")
+    for acompanhamento in acompanhamentos_usuario:
+        with st.container(border=True):
+            st.markdown(f"**{escape(acompanhamento['titulo'])}**")
+            situacao = (
+                "Disponível para empréstimo"
+                if acompanhamento["disponiveis"] > 0
+                else acompanhamento["status"]
+            )
+            st.caption(
+                f"Situação: {situacao} · Acompanhamento criado em "
+                f"{acompanhamento['criado_em']}"
+            )
+            if acompanhamento["status"] == "Ativo" and st.button(
+                "Cancelar acompanhamento",
+                key=f"cancelar_acompanhamento_{acompanhamento['id']}",
+            ):
+                if cancelar_acompanhamento(
+                    usuario_id,
+                    acompanhamento["id"],
+                ):
+                    st.success("Acompanhamento cancelado.")
+                    st.rerun()
+
+with aba_notificacoes:
+    notificacoes_usuario = listar_notificacoes_usuario(usuario_id)
+    if not notificacoes_usuario:
+        st.info("Você ainda não tem notificações.")
+    for notificacao in notificacoes_usuario:
+        with st.container(border=True):
+            if notificacao["lida_em"] is None:
+                st.markdown(f"**Não lida** · {notificacao['criada_em']}")
+            else:
+                st.caption(f"Lida em {notificacao['lida_em']}")
+            st.write(notificacao["mensagem"])
+            if notificacao["lida_em"] is None and st.button(
+                "Marcar como lida",
+                key=f"marcar_notificacao_{notificacao['id']}",
+            ):
+                marcar_notificacao_lida(usuario_id, notificacao["id"])
+                st.rerun()

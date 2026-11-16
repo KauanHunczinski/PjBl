@@ -110,6 +110,10 @@ small {
     transition: all 0.2s ease;
 }
 
+.stButton button * {
+    color: #FFFFFF !important;
+}
+
 .stButton button:hover {
     background-color: var(--ouro) !important;
     border-color: var(--ouro) !important;
@@ -124,9 +128,10 @@ small {
     border: 1px solid var(--linha);
     border-radius: var(--raio);
     padding: 15px;
-    .livro-capa img {
-    filter: drop-shadow(18px 25px 18px rgba(30, 36, 48, 0.28));
 }
+
+.livro-capa img {
+    filter: drop-shadow(18px 25px 18px rgba(30, 36, 48, 0.28));
 }
 
 .stAlert {
@@ -148,6 +153,39 @@ small {
 [data-testid="stSidebar"] h2,
 [data-testid="stSidebar"] h3 {
     color: #FFFFFF !important;
+}
+
+.st-key-perfil_acesso [data-testid="stImage"] img {
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 2px solid var(--ouro);
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatar-catalogo {
+    display: flex;
+    width: 3.5rem;
+    height: 3.5rem;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--ouro);
+    border-radius: 50%;
+    color: #FFFFFF;
+    font-family: var(--fonte-titulo);
+    font-size: 1.75rem;
+}
+
+.st-key-perfil_acesso [data-testid="stButton"] button {
+    background-color: transparent !important;
+    border-color: var(--ouro) !important;
+    color: #FFFFFF !important;
+    padding: 8px 10px !important;
+}
+
+.st-key-perfil_acesso [data-testid="stButton"] button:hover {
+    background-color: var(--ouro) !important;
+    border-color: var(--ouro) !important;
 }
 
 
@@ -199,6 +237,44 @@ a:hover {
 
 .resultado-livro p {
     color: var(--tinta-suave);
+}
+
+div[class*="st-key-livro_externo_"] [data-testid="stImage"] img {
+    filter: grayscale(1);
+}
+
+div[class*="st-key-livro_externo_"] h4,
+div[class*="st-key-livro_externo_"] p,
+div[class*="st-key-livro_externo_"] [data-testid="stMarkdownContainer"],
+div[class*="st-key-livro_externo_"] [data-testid="stMarkdownContainer"] *,
+div[class*="st-key-livro_externo_"] [data-testid="stCaptionContainer"],
+div[class*="st-key-livro_externo_"] [data-testid="stText"] {
+    color: #777777 !important;
+}
+
+div[class*="st-key-livro_externo_"] [data-testid="stButton"] button,
+div[class*="st-key-livro_externo_"] [data-testid="stButton"] button * {
+    color: #FFFFFF !important;
+}
+
+[data-testid="stText"] {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+[data-testid="stDialog"] [data-testid="stImage"] img {
+    max-height: 460px;
+    object-fit: contain;
+}
+
+@media (max-width: 640px) {
+    [data-testid="stDialog"] [data-testid="stImage"] img {
+        max-height: 300px;
+    }
+
+    [data-testid="stDialog"] [data-testid="stDialogContent"] {
+        padding: 0.75rem;
+    }
 }
 
 
