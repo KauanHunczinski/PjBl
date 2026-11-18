@@ -1830,3 +1830,43 @@ def autenticar_usuario(email, senha):
 
 if __name__=="__main__":
     exibir_livros()
+
+
+
+# Buscar o livro mais emprestado
+def livro_mais_emprestado():
+    conn = connect()
+
+    cursor = conn.execute("""
+        SELECT livros.titulo, COUNT(*) AS total
+        FROM emprestimos
+        JOIN livros ON emprestimos.id_livro = livros.id
+        GROUP BY livros.id, livros.titulo
+        ORDER BY total DESC
+        LIMIT 1
+    """)
+
+    resultado = cursor.fetchone()
+    conn.close()
+
+    return resultado
+
+
+# Buscar quantidade de empréstimos por livro
+def grafico_emprestimos():
+    conn = connect()
+
+    livros = conn.execute("""
+        SELECT livros.titulo, COUNT(*) AS total
+        FROM emprestimos
+        JOIN livros ON emprestimos.id_livro = livros.id
+        GROUP BY livros.id, livros.titulo
+        ORDER BY total DESC
+    """).fetchall()
+
+    conn.close()
+
+    return [
+        {"Livro": livro[0], "Total": livro[1]}
+        for livro in livros
+    ]

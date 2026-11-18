@@ -19,6 +19,8 @@ from Livros.view import (
     listar_exemplares_disponiveis,
     listar_emprestimos_administrativos,
     registrar_devolucao,
+    livro_mais_emprestado,
+    grafico_emprestimos,
 )
 from datetime import date, timedelta
 
@@ -388,6 +390,57 @@ def pagina_livros():
 # Exibir o cadastro e a lista de livros
 
 pagina_livros()
+
+
+# DASHBOARD DA GERÊNCIA
+
+st.divider()
+st.title("Dashboard da Biblioteca")
+
+resultado = livro_mais_emprestado()
+
+if resultado:
+    nome_livro = resultado[0]
+    quantidade = resultado[1]
+
+    st.metric(
+        label="Livro mais emprestado",
+        value=nome_livro
+    )
+
+    st.write(f"Total de empréstimos: {quantidade}")
+
+else:
+    st.info("Ainda não existem empréstimos cadastrados.")
+
+
+# Gráfico de pizza
+st.subheader("Empréstimos por Livro")
+
+dados = grafico_emprestimos()
+
+if dados:
+    st.vega_lite_chart(
+        dados,
+        {
+            "mark": {"type": "arc", "tooltip": True},
+            "encoding": {
+                "theta": {
+                    "field": "Total",
+                    "type": "quantitative"
+                },
+                "color": {
+                    "field": "Livro",
+                    "type": "nominal"
+                }
+            }
+        },
+        use_container_width=True
+    )
+else:
+    st.info("Nenhum empréstimo cadastrado.")
+
+
 
 st.divider()
 st.subheader("Solicitações de aquisição")
